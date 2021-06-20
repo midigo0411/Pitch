@@ -90,3 +90,14 @@ def profile(id):
         return redirect(url_for('main.profile', id=id))
 
     return render_template('profile.html', pitches=pitches, form=form, user=user, title=title)
+@main.route('/like/<int:id>/<action>', methods = ['GET', 'POST'])
+@login_required
+def like_action(id, action):
+    pitch = Pitch.query.filter_by(id=id).first_or_404()
+    if action == 'like':
+        current_user.like_pitch(pitch)
+        db.session.commit()
+    if action == 'unlike':
+        current_user.unlike_pitch(pitch)
+        db.session.commit()
+    return redirect(request.referrer)
