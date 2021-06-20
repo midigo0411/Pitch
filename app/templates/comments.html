@@ -1,0 +1,112 @@
+{% extends 'index.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block pitches %}
+{{ super() }}
+<div class="pitch p-4 mb-3">
+    <div class="pitch-header">
+        <div class="dp-div">
+            <img src="{{url_for('static', filename=pitch.user.profile_pic_path)}}" />
+        </div>
+        <div class="mx-3">
+            <div class="names">
+                <span class="full-name">{{ pitch.user.fname.capitalize() }} {{ pitch.user.lname.capitalize() }}</span>
+                <span class="username">@{{ pitch.user.username.lower() }}</span>
+            </div>
+            <div class="time">{{pitch.posted.strftime('%I:%M %p')}}</div>
+        </div>
+    </div>
+    <div class="pitch-content">
+        <p>
+            {{ pitch.pitch }}
+        </p>
+    </div>
+    <div class="pitch-footer">
+        <div class="likes ftr-highlight">
+            <a href="{{ url_for('main.like_action', id=pitch.id, action='like') }}">
+                <div class="thumbs-up">
+                    <i class="fas fa-arrow-circle-up"></i>
+                </div>
+            </a>
+        </div>
+        <div>
+            <div>
+                {{pitch.likes.count()}}
+            </div>
+        </div>
+        <div class="dislikes">
+            <a href="{{ url_for('main.like_action', id=pitch.id, action='unlike') }}">
+                <div class="thumbs-down">
+                    <i class="fas fa-arrow-circle-down"></i>
+                </div>
+            </a>
+        </div>
+        <div class="comments">
+            <!-- <a href="{{url_for('main.comment', pitch_id=pitch.id)}}"> -->
+            <div>
+                <i class="fas fa-comment"></i>
+            </div>
+            <div>{{pitch.comments.count()}}</div>
+            </a>
+        </div>
+    </div>
+    {% if current_user.is_authenticated %}
+    <div class="comment-field">
+        {{ wtf.quick_form(form) }}
+    </div>
+    {% endif %}
+    <hr>
+
+    <div class="comments-div">
+
+        {% for comment in comments %}
+        <div class="comment px-4 mb-2">
+            <div class="pitch-header">
+                <div class="dp-div">
+                    <img src="{{url_for('static', filename=comment.user.profile_pic_path)}}" />
+                </div>
+                <div class="mx-3">
+                    <div class="names">
+                        <span class="full-name">{{comment.user.fname.capitalize()}}
+                            {{comment.user.lname.capitalize()}}</span>
+                        <span class="username">@{{comment.user.username.lower()}}</span>
+                    </div>
+                    <div class="time">{{comment.posted.strftime('%I:%M %p')}}</div>
+                </div>
+            </div>
+            <div class="comment-body">
+                <div class="comment-content">
+                    <p>
+                        {{comment.comment}}
+                    </p>
+                </div>
+                <div class="pitch-footer">
+                    <div class="likes">.
+                        <a href="{{ url_for('main.like_comment_action', id=comment.id, action='like') }}">
+                            <div class="thumbs-up">
+                                <i class="fas fa-arrow-circle-up    "></i>
+                            </div>
+                        </a>
+                    </div>
+                    <div>
+                        <div>
+                            {{comment.likes.count()}}
+                        </div>
+                    </div>
+                    <div class="dislikes">
+                        <a href="{{ url_for('main.like_comment_action', id=comment.id, action='unlike') }}">
+                            <div class="thumbs-down">
+                                <i class="fas fa-arrow-circle-down    "></i>
+                            </div>
+                        </a>
+                        <div class="dislikes-count">{{comment.dislikes}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}
