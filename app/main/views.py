@@ -101,3 +101,15 @@ def like_action(id, action):
         current_user.unlike_pitch(pitch)
         db.session.commit()
     return redirect(request.referrer)
+
+@main.route('/like/comment/<int:id>/<action>', methods = ['GET', 'POST'])
+@login_required
+def like_comment_action(id, action):
+    comment = Comment.query.filter_by(id=id).first_or_404()
+    if action == 'like':
+        current_user.like_comment(comment)
+        db.session.commit()
+    if action == 'unlike':
+        current_user.unlike_comment(comment)
+        db.session.commit()
+    return redirect(url_for('main.comment', pitch_id = comment.pitch.id))
