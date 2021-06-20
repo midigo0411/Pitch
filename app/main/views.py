@@ -33,3 +33,24 @@ def index():
     
 
     return render_template('home.html', title = title, form=form, pitches = pitches)
+@main.route('/<int:id>', methods = ['GET', 'POST'])
+def categories(id):
+    '''
+    View root page function that returns the index page and its data
+    '''
+    
+    form = PitchForm()
+    title = 'Home | Pitcher'
+    form.category.query = Category.query
+    if form.validate_on_submit():
+        selected_category = form.category.data
+        pitch = form.pitch.data
+
+        new_pitch = Pitch(pitch=pitch, user=current_user, category=selected_category)
+
+        # Save Pitch
+        new_pitch.save_pitch()
+        return redirect(url_for('.index'))
+
+    pitches = Pitch.get_pitches_by_category(id)
+    return render_template('home.html', title = title, form=form, pitches = pitches)
