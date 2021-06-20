@@ -1,0 +1,75 @@
+{% extends 'base.html' %}{% block main %} {{ super() }}
+{% import "bootstrap/wtf.html" as wtf %}
+
+<div class="container">
+	<div class="profile-content">
+		<div class="profile-header">
+			<div id="dp">
+				<img
+					src="{{url_for('static', filename=current_user.profile_pic_path)}}"
+				/>
+			</div>
+			<div id="names">
+				<div id="full-name">{{user.fname}} {{user.lname}}</div>
+				<div id="username">@{{user.username}}</div>
+                <hr>
+                {{ wtf.quick_form(form) }}
+			</div>
+		</div>
+		<div id="bio">
+			<h3>Bio</h3>
+			<hr />
+			{%if user.bio %}
+			<p>{{user.bio}}</p>
+			{% else %}
+			<p>No bio yet.</p>
+			{% endif %}
+		</div>
+
+		<div id="email">
+			<h3>Email</h3>
+			<hr />
+			<p>{{user.email}}</p>
+		</div>
+
+		<div id="pitches">
+			<h3>My Pitches</h3>
+			<hr />
+			{% for pitch in pitches %}
+			<div class="pitch">
+				<div class="pitch-content">
+					<p>{{ pitch.pitch }}</p>
+				</div>
+				<div class="pitch-footer">
+					<div class="likes">
+						<div class="thumbs-up">
+							<i class="fas fa-arrow-circle-up    "></i>
+						</div>
+					</div>
+                    <div>
+                        <div>
+                            {{pitch.likes.count()}}
+                        </div>
+                    </div>
+					<div class="dislikes">
+						<div class="thumbs-down">
+							<i class="fas fa-arrow-circle-down    "></i>
+						</div>
+					</div>
+					<div class="comments">
+						<a href="{{url_for('main.comment', pitch_id=pitch.id)}}">
+							<div>
+								<i class="fas fa-comment"></i>
+							</div>
+							<div>{{pitch.comments.count()}}</div>
+						</a>
+					</div>
+				</div>
+			</div>
+
+			{% endfor %}
+		</div>
+	</div>
+</div>
+
+{% endblock %}
