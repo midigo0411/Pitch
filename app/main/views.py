@@ -71,3 +71,22 @@ def comment(pitch_id):
         return redirect(request.referrer)
 
     return render_template('comments.html', pitch=pitch, form=comment_form, comments=comments, title=title)
+
+@main.route('/user/profile/<int:id>', methods = ['GET', 'POST'])
+@login_required
+def profile(id):
+
+    form = UpdateProfilePic()
+    user = User.query.filter_by(id=id).first()
+    pitches = Pitch.get_pitches_by_user(id)
+
+    title = '{} {} | Profile'.format(user.fname, user.lname)
+
+    if form.validate_on_submit():
+        filename = photos.save(form.profile.data)
+        profile_pic_path = f'img/{filename}'
+        user.profile_pic_path = profile_pic_path
+        db.session.commit()
+        return redirect(url_for('main.profile', id=id))
+
+    return render_template('profile.html', pitches=pitches, form=form, user=user, title=title)
